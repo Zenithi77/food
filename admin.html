@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Dashboard | Organic Harvest</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b8cda9",
+                        "error": "#ba1a1a",
+                        "on-background": "#1b1c1c",
+                        "surface-container-high": "#eae7e7",
+                        "secondary-fixed-dim": "#c7c7c2",
+                        "surface-container-low": "#f6f3f2",
+                        "surface-variant": "#e4e2e1",
+                        "on-tertiary-fixed": "#171d13",
+                        "on-surface": "#1b1c1c",
+                        "tertiary-fixed": "#dee5d5",
+                        "surface-dim": "#dcd9d9",
+                        "on-primary-fixed": "#0f1f09",
+                        "on-primary-fixed-variant": "#3a4c31",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#5e7153",
+                        "on-secondary-fixed": "#1b1c19",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fcf9f8",
+                        "secondary-fixed": "#e3e3de",
+                        "on-secondary-fixed-variant": "#464744",
+                        "tertiary-container": "#676e61",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#d4e9c4",
+                        "on-secondary-container": "#646561",
+                        "tertiary": "#4f5649",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#dff4cf",
+                        "surface": "#fcf9f8",
+                        "outline": "#74786f",
+                        "secondary-container": "#e3e3de",
+                        "surface-container": "#f0eded",
+                        "on-surface-variant": "#444840",
+                        "on-tertiary-container": "#eaf1e0",
+                        "on-tertiary-fixed-variant": "#42493d",
+                        "secondary": "#5e5f5b",
+                        "inverse-surface": "#303030",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c4c8bd",
+                        "surface-bright": "#fcf9f8",
+                        "primary": "#46583c",
+                        "surface-container-highest": "#e4e2e1",
+                        "primary-fixed-dim": "#b8cda9",
+                        "inverse-on-surface": "#f3f0f0",
+                        "surface-tint": "#516447",
+                        "tertiary-fixed-dim": "#c2c9b9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "lg": "48px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "xl": "80px",
+                        "sm": "12px",
+                        "md": "24px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["EB Garamond"],
+                        "headline-lg-mobile": ["EB Garamond"],
+                        "display-lg": ["EB Garamond"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg": ["EB Garamond"],
+                        "label-sm": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fcf9f8;
+            color: #1b1c1c;
+            -webkit-font-smoothing: antialiased;
+        }
+        .item-card-shadow {
+            box-shadow: 0 4px 20px rgba(94, 113, 83, 0.08);
+        }
+        .sidebar-link.active {
+            background-color: #46583c;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex font-body-md text-body-md">
+
+<!-- Sidebar -->
+<aside class="w-64 flex-shrink-0 bg-surface-container-lowest border-r border-outline-variant h-screen sticky top-0 flex flex-col">
+<div class="h-20 flex items-center px-md border-b border-outline-variant">
+<a class="font-headline-md text-headline-md font-medium text-primary" href="index.html">Organic Harvest</a>
+</div>
+<nav class="flex-grow p-sm space-y-1">
+<a class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors" href="#" onclick="showPanel('dashboard', this)">
+<span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-low transition-colors" href="#" onclick="showPanel('products', this)">
+<span class="material-symbols-outlined text-xl" data-icon="inventory_2">inventory_2</span>
+                Products
+            </a>
+<a class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-low transition-colors" href="#" onclick="showPanel('orders', this)">
+<span class="material-symbols-outlined text-xl" data-icon="receipt_long">receipt_long</span>
+                Orders
+            </a>
+<a class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-low transition-colors" href="#" onclick="showPanel('customers', this)">
+<span class="material-symbols-outlined text-xl" data-icon="group">group</span>
+                Customers
+            </a>
+</nav>
+<div class="p-sm border-t border-outline-variant">
+<div class="flex items-center gap-2 px-4 py-3">
+<span class="material-symbols-outlined text-primary" data-icon="account_circle">account_circle</span>
+<div class="flex-grow overflow-hidden">
+<p class="font-label-md text-label-md truncate" id="admin-email">admin@organicharvest.com</p>
+<p class="text-label-sm text-secondary">Administrator</p>
+</div>
+</div>
+<button class="w-full flex items-center gap-2 px-4 py-2 rounded-lg text-secondary hover:bg-surface-container-low hover:text-error transition-colors font-label-sm" onclick="logout()">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+                Log Out
+            </button>
+</div>
+</aside>
+
+<!-- Main content -->
+<main class="flex-grow p-lg overflow-y-auto">
+<!-- Dashboard Panel -->
+<div id="panel-dashboard">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-lg">Dashboard</h1>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-xl">
+<div class="item-card-shadow bg-surface-container-lowest rounded-lg p-md">
+<p class="text-label-sm text-secondary uppercase tracking-wider mb-1">Revenue (30d)</p>
+<p class="font-headline-md text-headline-md text-primary">$18,420</p>
+<p class="text-label-sm text-primary mt-1">+12.4% vs last month</p>
+</div>
+<div class="item-card-shadow bg-surface-container-lowest rounded-lg p-md">
+<p class="text-label-sm text-secondary uppercase tracking-wider mb-1">Orders</p>
+<p class="font-headline-md text-headline-md text-primary">312</p>
+<p class="text-label-sm text-primary mt-1">+8 today</p>
+</div>
+<div class="item-card-shadow bg-surface-container-lowest rounded-lg p-md">
+<p class="text-label-sm text-secondary uppercase tracking-wider mb-1">Customers</p>
+<p class="font-headline-md text-headline-md text-primary">1,204</p>
+<p class="text-label-sm text-secondary mt-1">+21 this week</p>
+</div>
+<div class="item-card-shadow bg-surface-container-lowest rounded-lg p-md">
+<p class="text-label-sm text-secondary uppercase tracking-wider mb-1">Low Stock Items</p>
+<p class="font-headline-md text-headline-md text-error">3</p>
+<p class="text-label-sm text-secondary mt-1">Needs attention</p>
+</div>
+</div>
+
+<h2 class="font-headline-md text-headline-md text-primary mb-md">Recent Orders</h2>
+<div class="item-card-shadow bg-surface-container-lowest rounded-lg overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Order</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Customer</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Status</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider text-right">Total</th>
+</tr>
+</thead>
+<tbody id="recent-orders-body">
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">#1042</td>
+<td class="px-md py-3">Jane Doe</td>
+<td class="px-md py-3"><span class="px-2 py-1 rounded-full bg-primary-container text-on-primary-container text-label-sm">Delivered</span></td>
+<td class="px-md py-3 text-right font-label-md">$42.10</td>
+</tr>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">#1041</td>
+<td class="px-md py-3">Mark Evans</td>
+<td class="px-md py-3"><span class="px-2 py-1 rounded-full bg-secondary-container text-secondary text-label-sm">Shipped</span></td>
+<td class="px-md py-3 text-right font-label-md">$25.65</td>
+</tr>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">#1040</td>
+<td class="px-md py-3">Priya Singh</td>
+<td class="px-md py-3"><span class="px-2 py-1 rounded-full bg-error-container text-on-error-container text-label-sm">Pending</span></td>
+<td class="px-md py-3 text-right font-label-md">$61.30</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Products Panel -->
+<div class="hidden" id="panel-products">
+<div class="flex justify-between items-center mb-lg">
+<h1 class="font-headline-lg text-headline-lg text-primary">Products</h1>
+<button class="bg-primary text-on-primary py-2 px-6 rounded-full font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-base" data-icon="add">add</span>
+                    Add Product
+                </button>
+</div>
+<div class="item-card-shadow bg-surface-container-lowest rounded-lg overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Product</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Price</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Stock</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">Heirloom Tuscan Kale</td>
+<td class="px-md py-3">$4.50</td>
+<td class="px-md py-3">86</td>
+<td class="px-md py-3 text-right">
+<button class="text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="text-secondary hover:text-error transition-colors ml-2"><span class="material-symbols-outlined text-lg" data-icon="delete">delete</span></button>
+</td>
+</tr>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">Coastal Farm Strawberries</td>
+<td class="px-md py-3">$6.75</td>
+<td class="px-md py-3">12</td>
+<td class="px-md py-3 text-right">
+<button class="text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="text-secondary hover:text-error transition-colors ml-2"><span class="material-symbols-outlined text-lg" data-icon="delete">delete</span></button>
+</td>
+</tr>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">Small Batch Sourdough</td>
+<td class="px-md py-3">$8.00</td>
+<td class="px-md py-3">4</td>
+<td class="px-md py-3 text-right">
+<button class="text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="text-secondary hover:text-error transition-colors ml-2"><span class="material-symbols-outlined text-lg" data-icon="delete">delete</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Orders Panel -->
+<div class="hidden" id="panel-orders">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-lg">Orders</h1>
+<div class="item-card-shadow bg-surface-container-lowest rounded-lg overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Order</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Customer</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Date</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Status</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider text-right">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">#1042</td>
+<td class="px-md py-3">Jane Doe</td>
+<td class="px-md py-3">Jul 20, 2026</td>
+<td class="px-md py-3"><span class="px-2 py-1 rounded-full bg-primary-container text-on-primary-container text-label-sm">Delivered</span></td>
+<td class="px-md py-3 text-right font-label-md">$42.10</td>
+</tr>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">#1041</td>
+<td class="px-md py-3">Mark Evans</td>
+<td class="px-md py-3">Jul 19, 2026</td>
+<td class="px-md py-3"><span class="px-2 py-1 rounded-full bg-secondary-container text-secondary text-label-sm">Shipped</span></td>
+<td class="px-md py-3 text-right font-label-md">$25.65</td>
+</tr>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">#1040</td>
+<td class="px-md py-3">Priya Singh</td>
+<td class="px-md py-3">Jul 18, 2026</td>
+<td class="px-md py-3"><span class="px-2 py-1 rounded-full bg-error-container text-on-error-container text-label-sm">Pending</span></td>
+<td class="px-md py-3 text-right font-label-md">$61.30</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Customers Panel -->
+<div class="hidden" id="panel-customers">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-lg">Customers</h1>
+<div class="item-card-shadow bg-surface-container-lowest rounded-lg overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Name</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Email</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Orders</th>
+<th class="px-md py-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider text-right">Joined</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">Jane Doe</td>
+<td class="px-md py-3">jane@example.com</td>
+<td class="px-md py-3">14</td>
+<td class="px-md py-3 text-right">Jan 2025</td>
+</tr>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">Mark Evans</td>
+<td class="px-md py-3">mark@example.com</td>
+<td class="px-md py-3">6</td>
+<td class="px-md py-3 text-right">Mar 2025</td>
+</tr>
+<tr class="border-t border-outline-variant">
+<td class="px-md py-3 font-label-md">Priya Singh</td>
+<td class="px-md py-3">priya@example.com</td>
+<td class="px-md py-3">3</td>
+<td class="px-md py-3 text-right">Jun 2025</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+
+<script>
+    // Gate the dashboard behind the demo admin session set by login.html.
+    const session = JSON.parse(sessionStorage.getItem('oh_user') || 'null');
+    if (!session || session.role !== 'admin') {
+        window.location.href = 'login.html';
+    } else {
+        document.getElementById('admin-email').textContent = session.email;
+    }
+
+    function showPanel(name, link) {
+        document.querySelectorAll('[id^="panel-"]').forEach(p => p.classList.add('hidden'));
+        document.getElementById('panel-' + name).classList.remove('hidden');
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+    }
+
+    function logout() {
+        sessionStorage.removeItem('oh_user');
+        window.location.href = 'login.html';
+    }
+</script>
+</body>
+</html>

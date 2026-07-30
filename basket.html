@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Your Basket | Organic Harvest</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b8cda9",
+                        "error": "#ba1a1a",
+                        "on-background": "#1b1c1c",
+                        "surface-container-high": "#eae7e7",
+                        "secondary-fixed-dim": "#c7c7c2",
+                        "surface-container-low": "#f6f3f2",
+                        "surface-variant": "#e4e2e1",
+                        "on-tertiary-fixed": "#171d13",
+                        "on-surface": "#1b1c1c",
+                        "tertiary-fixed": "#dee5d5",
+                        "surface-dim": "#dcd9d9",
+                        "on-primary-fixed": "#0f1f09",
+                        "on-primary-fixed-variant": "#3a4c31",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#5e7153",
+                        "on-secondary-fixed": "#1b1c19",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fcf9f8",
+                        "secondary-fixed": "#e3e3de",
+                        "on-secondary-fixed-variant": "#464744",
+                        "tertiary-container": "#676e61",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#d4e9c4",
+                        "on-secondary-container": "#646561",
+                        "tertiary": "#4f5649",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#dff4cf",
+                        "surface": "#fcf9f8",
+                        "outline": "#74786f",
+                        "secondary-container": "#e3e3de",
+                        "surface-container": "#f0eded",
+                        "on-surface-variant": "#444840",
+                        "on-tertiary-container": "#eaf1e0",
+                        "on-tertiary-fixed-variant": "#42493d",
+                        "secondary": "#5e5f5b",
+                        "inverse-surface": "#303030",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c4c8bd",
+                        "surface-bright": "#fcf9f8",
+                        "primary": "#46583c",
+                        "surface-container-highest": "#e4e2e1",
+                        "primary-fixed-dim": "#b8cda9",
+                        "inverse-on-surface": "#f3f0f0",
+                        "surface-tint": "#516447",
+                        "tertiary-fixed-dim": "#c2c9b9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "lg": "48px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "xl": "80px",
+                        "sm": "12px",
+                        "md": "24px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["EB Garamond"],
+                        "headline-lg-mobile": ["EB Garamond"],
+                        "display-lg": ["EB Garamond"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg": ["EB Garamond"],
+                        "label-sm": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fcf9f8;
+            color: #1b1c1c;
+            -webkit-font-smoothing: antialiased;
+        }
+        .item-card-shadow {
+            box-shadow: 0 4px 20px rgba(94, 113, 83, 0.08);
+        }
+        .item-card-shadow:hover {
+            box-shadow: 0 8px 30px rgba(94, 113, 83, 0.12);
+            transform: translateY(-2px);
+            transition: all 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky z-50 bg-background dark:bg-background">
+<div class="max-w-container-max mx-auto px-margin-desktop h-20 flex justify-between items-center">
+<div class="flex items-center gap-xl">
+<a class="font-headline-md text-headline-md font-medium text-primary dark:text-primary-fixed" href="index.html">Organic Harvest</a>
+<nav class="hidden md:flex gap-md">
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-md text-label-md" href="index.html">Shop</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-md text-label-md" href="#">About</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-md text-label-md" href="#">Recipes</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden md:block relative">
+<input class="bg-surface-container-low border-none rounded-full px-md py-2 text-label-md focus:ring-1 focus:ring-primary w-64" placeholder="Search harvests..." type="text"/>
+</div>
+<a class="text-secondary hover:text-primary transition-colors font-label-md text-label-md hidden md:block" href="login.html">Log In</a>
+<button class="relative p-2 hover:opacity-80 transition-opacity active:scale-95 duration-150 ease-in-out text-primary">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="absolute top-0 right-0 bg-primary text-on-primary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">3</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-container-max mx-auto px-margin-desktop py-xl w-full">
+<h1 class="font-display-lg text-display-lg text-primary mb-lg">Your Basket</h1>
+<div class="flex flex-col lg:grid lg:grid-cols-12 gap-xl">
+<!-- Cart Items List -->
+<div class="lg:col-span-8 space-y-md">
+<!-- Item 1 -->
+<div class="item-card-shadow bg-surface-container-lowest p-md rounded-lg flex items-center gap-md">
+<div class="w-32 h-32 rounded overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" alt="Heirloom Tuscan Kale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbtPNRNf4HqmPOmZxithvLhTCJvUb5_iMrM6RSjrO0jzlthXAiJniwXD0Xg_8QVoRQab2-xThZ0TWI9QWT9-Nx3Er6_GOWcwYz4YTktkEnd1-mc5I5YOQ3gUriJV7xfPeDM4Aud87He0ZbBx4Hw_jBwvpV2J-xiB0_2vN5E5YYHXdjVfowX7O3J-b3X8NcWNmWtr1x64aSNqv620P8MRKWog_oQGx5XMA2ZermfA3BHFtDxRohJdO46Q"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Heirloom Tuscan Kale</h3>
+<p class="text-on-surface-variant font-label-sm uppercase tracking-wider">Per Bunch</p>
+</div>
+<p class="font-label-md text-label-md text-primary">$4.50</p>
+</div>
+<div class="mt-md flex justify-between items-center">
+<div class="flex items-center border border-tertiary-fixed rounded-full px-2 py-1 bg-surface-container-low">
+<button class="p-1 hover:text-primary transition-colors active:scale-90" onclick="updateQty(this, -1)">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
+</button>
+<span class="px-4 font-label-md">2</span>
+<button class="p-1 hover:text-primary transition-colors active:scale-90" onclick="updateQty(this, 1)">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+</div>
+<button class="text-secondary hover:text-error transition-colors flex items-center gap-1 font-label-sm" onclick="removeItem(this)">
+<span class="material-symbols-outlined text-base" data-icon="delete">delete</span>
+                                REMOVE
+                            </button>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="item-card-shadow bg-surface-container-lowest p-md rounded-lg flex items-center gap-md">
+<div class="w-32 h-32 rounded overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" alt="Coastal Farm Strawberries" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxomPwdxqLOj2tsqEZlkvlx_FCjVD2AKkL50wnRG0wXufA7hcUFA9-mshZ7kTNk7RPTCBeozp2oIaNoTbM-MpoFwNG9HQVI_otcPIV9UgKRQeRa6eOLEhpPnwT1_8UfvBXTszRKJPMrI745greLvZmA7UU-fG2rCiQCVF4379XpfzXDCc5LK2HoGv72m17VEhV0htXG-gcCD4tP4ptbymtHShfyTPKWcS9yKsu0JkkqkGFOyIvE1JtAg"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Coastal Farm Strawberries</h3>
+<p class="text-on-surface-variant font-label-sm uppercase tracking-wider">1lb Box</p>
+</div>
+<p class="font-label-md text-label-md text-primary">$6.75</p>
+</div>
+<div class="mt-md flex justify-between items-center">
+<div class="flex items-center border border-tertiary-fixed rounded-full px-2 py-1 bg-surface-container-low">
+<button class="p-1 hover:text-primary transition-colors active:scale-90" onclick="updateQty(this, -1)">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
+</button>
+<span class="px-4 font-label-md">1</span>
+<button class="p-1 hover:text-primary transition-colors active:scale-90" onclick="updateQty(this, 1)">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+</div>
+<button class="text-secondary hover:text-error transition-colors flex items-center gap-1 font-label-sm" onclick="removeItem(this)">
+<span class="material-symbols-outlined text-base" data-icon="delete">delete</span>
+                                REMOVE
+                            </button>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="item-card-shadow bg-surface-container-lowest p-md rounded-lg flex items-center gap-md">
+<div class="w-32 h-32 rounded overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" alt="Small Batch Sourdough" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4urmrEW3cyVfoLbuaFzzpb_h3fNW0ZvndGVjqn3bUiAoib3GcBe8mNf_FAmfoLrcSSFfQ0nJa-HgJyJohjDYQbXdBIEeBExHTVlgJOIyP7T0GkCJBgg5reQtrg4WBnDf9g-l4GpSRTyIZep30KUEUzqac_sMfPnQ8F9ieGTfp9Ckj9_2G2bwmnrM45cglgSO3ZWDuxlNuBMZzDDWJWqmNuFagru27WkmR-ESpAY0i32HCNJ9br8_UPw"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Small Batch Sourdough</h3>
+<p class="text-on-surface-variant font-label-sm uppercase tracking-wider">Large Loaf</p>
+</div>
+<p class="font-label-md text-label-md text-primary">$8.00</p>
+</div>
+<div class="mt-md flex justify-between items-center">
+<div class="flex items-center border border-tertiary-fixed rounded-full px-2 py-1 bg-surface-container-low">
+<button class="p-1 hover:text-primary transition-colors active:scale-90" onclick="updateQty(this, -1)">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
+</button>
+<span class="px-4 font-label-md">1</span>
+<button class="p-1 hover:text-primary transition-colors active:scale-90" onclick="updateQty(this, 1)">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+</div>
+<button class="text-secondary hover:text-error transition-colors flex items-center gap-1 font-label-sm" onclick="removeItem(this)">
+<span class="material-symbols-outlined text-base" data-icon="delete">delete</span>
+                                REMOVE
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Sidebar -->
+<div class="lg:col-span-4">
+<div class="bg-secondary-container rounded-lg p-lg sticky top-28">
+<h2 class="font-headline-md text-headline-md text-primary mb-md">Order Summary</h2>
+<div class="space-y-sm mb-lg">
+<div class="flex justify-between items-center">
+<span class="text-secondary">Subtotal</span>
+<span class="font-label-md">$23.75</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-secondary">Shipping Estimate</span>
+<span class="font-label-md text-primary">Free</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-secondary">Estimated Tax</span>
+<span class="font-label-md">$1.90</span>
+</div>
+<div class="pt-sm border-t border-outline-variant flex justify-between items-center mt-md">
+<span class="font-label-md text-on-surface">Total</span>
+<span class="font-headline-md text-headline-md text-primary">$25.65</span>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-4 rounded-full font-label-md text-label-md hover:opacity-90 transition-opacity active:scale-[0.98] duration-150 flex items-center justify-center gap-2">
+                        PROCEED TO CHECKOUT
+                        <span class="material-symbols-outlined text-base" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="mt-lg p-md bg-surface-container-lowest rounded-lg">
+<p class="text-label-sm text-secondary flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="local_shipping">local_shipping</span>
+                            Arrives by Thursday, Dec 5th
+                        </p>
+</div>
+<div class="mt-md text-center">
+<p class="text-label-sm text-on-surface-variant italic">Every purchase supports our network of 12 local family farms.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Suggestions/Upsell -->
+<section class="mt-xl border-t border-tertiary-fixed pt-xl">
+<h3 class="font-headline-lg text-headline-lg text-primary mb-lg">Pairs Well With...</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<!-- Suggestion 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded overflow-hidden mb-sm relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Reserve Olive Oil" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBw54fwDfAkgQvGfOoUCDjompzcpaOfG7OXqrSbYli9sX_a0Nv48WByQ3g0rT8pcYS_px8_gCbaKdNcEUkLBCay_ibR7F8OYPRhdIRQi-6hWWwbj6mrFPOtu_aIAtBZsxzFrsG_nxoh3yDOCrsewyLq-aEvyEQCqzAs7o7PILF9Oqf_PeW22-YXGmm_kcJT_yvwUdsf7AYN0QSHhwEIbjCEgDNlLxegzuPPHqt-Ibmtr06EF1qaM46cXQ"/>
+<button class="absolute bottom-3 right-3 w-10 h-10 bg-surface-container-lowest rounded-full flex items-center justify-center shadow-md text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary">Reserve Olive Oil</h4>
+<p class="font-label-md text-label-md text-secondary">$18.00</p>
+</div>
+<!-- Suggestion 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded overflow-hidden mb-sm relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Aged Balsamic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZV-47QheOTtBcig38028-nzujg5K-qxcs2LlyzfjmxOOgVEV8Fpo3G0BgurK-ddVwWnAi5fnx8SXJXNdqyj5PjEq1Q81wFcL_j_eNtLpRIP6SuQ1XUrK8TJeU63kfL4lbY3dMnOXZeEn4cEm5dLFrfxwyZ5YLCoLx9Cw8KKm_MohSkJq-HbMwnP-7GfGo4ftp1ZOi1A2h9Mn-b78DAZiyTAQi2ksp_ndfLC3RVgaOpQ1Raq4T3lIriQ"/>
+<button class="absolute bottom-3 right-3 w-10 h-10 bg-surface-container-lowest rounded-full flex items-center justify-center shadow-md text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary">Aged Balsamic</h4>
+<p class="font-label-md text-label-md text-secondary">$14.00</p>
+</div>
+<!-- Suggestion 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded overflow-hidden mb-sm relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Local Cheese Board" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp9_Z7BF8EQrPmKhsPN7c-yfd1eExikUv3T6PIBCWQp140tOeJeQYxN6MfBMNG9cdT838rWcNRVl9aBUMNxmKF8Rl4LMhcEiOioRWAGylUTk_5-VdL6eMwWLDgw_m9EMUFt-ZwCF-_No4L_5WS9o6ZHfFp-j0rdISPKQgCTDe8M1R4umBjpS4LQrnyE3coSU5H33WwCV0vtKaBLpkxniUkQ9nMdghDsL7YAgroHlgsfELcIxYjLFQCgA"/>
+<button class="absolute bottom-3 right-3 w-10 h-10 bg-surface-container-lowest rounded-full flex items-center justify-center shadow-md text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary">Local Cheese Board</h4>
+<p class="font-label-md text-label-md text-secondary">$22.00</p>
+</div>
+<!-- Suggestion 4 -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded overflow-hidden mb-sm relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Winter Herb Bundle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyUFDmkZPxqztoWpT1mvJ3igGWj8_2EikXAZ69XHIVnEYNbNjuXJXi_vZODO_Tjg7K9b7dya2Rck797utegSHjAE4Ugo2_c-ldGJlPdFdncT3jHX2qv4FsYFnxgLiZLrp91Kv_GNnqCYh0d02zksyUB_JDvTr-sG47VJlQAyAB7GvMmZYmUlw5ccVwqmkYP64JsCGIXWgsHdMMgBBSlU-xB5u9qTtoOk5NJAy_TdRP46c_qYY8K9TjSQ"/>
+<button class="absolute bottom-3 right-3 w-10 h-10 bg-surface-container-lowest rounded-full flex items-center justify-center shadow-md text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary">Winter Herb Bundle</h4>
+<p class="font-label-md text-label-md text-secondary">$6.50</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-xl bg-secondary-container dark:bg-secondary-fixed">
+<div class="max-w-container-max mx-auto px-margin-desktop py-xl flex flex-col md:flex-row justify-between items-start gap-lg">
+<div class="max-w-xs">
+<h2 class="font-headline-md text-headline-md text-primary mb-sm">Organic Harvest</h2>
+<p class="text-on-secondary-container mb-md">Grown with intention. Harvested for your home. We believe in the power of slow food and regenerative farming.</p>
+<p class="font-body-md text-body-md text-on-secondary-container">© 2024 Organic Harvest. Grown with intention.</p>
+</div>
+<div class="grid grid-cols-2 gap-xl">
+<div class="flex flex-col gap-sm">
+<h4 class="font-label-md text-label-md text-primary uppercase tracking-widest">Connect</h4>
+<a class="text-secondary hover:text-primary hover:underline decoration-primary transition-colors" href="#">Instagram</a>
+<a class="text-secondary hover:text-primary hover:underline decoration-primary transition-colors" href="#">Newsletter</a>
+<a class="text-secondary hover:text-primary hover:underline decoration-primary transition-colors" href="#">Contact</a>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-label-md text-label-md text-primary uppercase tracking-widest">Policies</h4>
+<a class="text-secondary hover:text-primary hover:underline decoration-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-secondary hover:text-primary hover:underline decoration-primary transition-colors" href="#">Shipping Info</a>
+<a class="text-secondary hover:text-primary hover:underline decoration-primary transition-colors" href="#">Returns</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        function updateQty(btn, delta) {
+            const span = btn.parentElement.querySelector('span');
+            let current = parseInt(span.innerText);
+            if (current + delta >= 1) {
+                span.innerText = current + delta;
+            }
+        }
+
+        function removeItem(btn) {
+            const item = btn.closest('.item-card-shadow');
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(20px)';
+            item.style.transition = 'all 0.4s ease-in';
+            setTimeout(() => {
+                item.remove();
+            }, 400);
+        }
+    </script>
+</body></html>
