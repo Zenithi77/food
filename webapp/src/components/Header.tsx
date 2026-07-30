@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MaterialIcon } from "./MaterialIcon";
+import { CartDrawer } from "./CartDrawer";
 import { useCartStore, cartCount } from "@/store/cart";
 import type { CategoryDTO, SessionUser } from "@/types";
 
@@ -21,6 +22,7 @@ export function Header({
   const [session, setSession] = useState(initialSession);
   const [hydrated, setHydrated] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const [query, setQuery] = useState("");
 
   useEffect(() => setHydrated(true), []);
@@ -105,8 +107,9 @@ export function Header({
               Нэвтрэх
             </Link>
           )}
-          <Link
-            href="/basket"
+          <button
+            onClick={() => setCartOpen(true)}
+            aria-label="Сагс нээх"
             className="relative p-2 rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150 ease-in-out text-primary"
           >
             <MaterialIcon name="shopping_cart" />
@@ -115,7 +118,7 @@ export function Header({
                 {count}
               </span>
             )}
-          </Link>
+          </button>
           <button
             onClick={() => setMenuOpen((v) => !v)}
             aria-label={menuOpen ? "Цэс хаах" : "Цэс нээх"}
@@ -207,6 +210,8 @@ export function Header({
           </div>
         </div>
       )}
+
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
 }
