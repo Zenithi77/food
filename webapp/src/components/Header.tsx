@@ -1,24 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MaterialIcon } from "./MaterialIcon";
 import { CartDrawer } from "./CartDrawer";
 import { MobileMenu } from "./MobileMenu";
 import { useCartStore, cartCount } from "@/store/cart";
-import type { CategoryDTO, SessionUser } from "@/types";
+import type { SessionUser } from "@/types";
 
-export function Header({
-  initialSession,
-  categories,
-}: {
-  initialSession: SessionUser | null;
-  categories: CategoryDTO[];
-}) {
+export function Header({ initialSession }: { initialSession: SessionUser | null }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const activeCategoryId = searchParams.get("category");
   const items = useCartStore((s) => s.items);
   const [session, setSession] = useState(initialSession);
   const [hydrated, setHydrated] = useState(false);
@@ -130,31 +122,6 @@ export function Header({
           </button>
         </div>
       </div>
-
-      {categories.length > 0 && (
-        <div className="border-t border-outline-variant/60 bg-surface-container-low/50">
-          <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-            <nav className="flex gap-2 overflow-x-auto py-2 no-scrollbar">
-              {categories.map((c) => {
-                const active = activeCategoryId === c.id;
-                return (
-                  <Link
-                    key={c.id}
-                    href={`/?category=${c.id}`}
-                    className={`shrink-0 px-3.5 py-1.5 rounded-full font-label-sm text-label-sm whitespace-nowrap transition-colors ${
-                      active
-                        ? "bg-primary text-on-primary"
-                        : "text-secondary hover:bg-surface-container-high hover:text-primary"
-                    }`}
-                  >
-                    {c.name}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
-      )}
 
       <MobileMenu
         open={menuOpen}
