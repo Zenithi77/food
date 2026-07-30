@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MaterialIcon } from "./MaterialIcon";
 import { CartDrawer } from "./CartDrawer";
+import { MobileMenu } from "./MobileMenu";
 import { useCartStore, cartCount } from "@/store/cart";
 import type { CategoryDTO, SessionUser } from "@/types";
 
@@ -155,61 +156,15 @@ export function Header({
         </div>
       )}
 
-      {menuOpen && (
-        <div className="md:hidden border-t border-outline-variant bg-background px-margin-mobile py-u-md flex flex-col gap-u-sm">
-          <form onSubmit={handleSearch} className="relative mb-u-sm">
-            <MaterialIcon
-              name="search"
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-lg pointer-events-none"
-            />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full bg-surface-container-low border-none rounded-full pl-10 pr-u-md py-2 text-label-md focus:ring-2 focus:ring-primary/40"
-              placeholder="Бүтээгдэхүүн хайх..."
-              type="text"
-            />
-          </form>
-          <Link href="/" onClick={() => setMenuOpen(false)} className="text-secondary hover:text-primary transition-colors font-label-md text-label-md py-1">
-            Дэлгүүр
-          </Link>
-          <Link href="/orders" onClick={() => setMenuOpen(false)} className="text-secondary hover:text-primary transition-colors font-label-md text-label-md py-1">
-            Захиалгууд
-          </Link>
-          <a href="#" onClick={() => setMenuOpen(false)} className="text-secondary hover:text-primary transition-colors font-label-md text-label-md py-1">
-            Бидний тухай
-          </a>
-          <div className="border-t border-outline-variant pt-u-sm mt-1">
-            {session ? (
-              <>
-                {session.role === "ADMIN" && (
-                  <Link
-                    href="/admin"
-                    onClick={() => setMenuOpen(false)}
-                    className="block text-secondary hover:text-primary transition-colors font-label-md text-label-md py-1"
-                  >
-                    Админ
-                  </Link>
-                )}
-                <button
-                  onClick={handleLogout}
-                  className="text-left w-full text-secondary hover:text-error transition-colors font-label-md text-label-md py-1"
-                >
-                  Гарах
-                </button>
-              </>
-            ) : (
-              <Link
-                href="/login"
-                onClick={() => setMenuOpen(false)}
-                className="block text-secondary hover:text-primary transition-colors font-label-md text-label-md py-1"
-              >
-                Нэвтрэх
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        session={session}
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        onLogout={handleLogout}
+      />
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </header>

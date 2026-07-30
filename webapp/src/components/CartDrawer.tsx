@@ -29,7 +29,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
       <div
         onClick={onClose}
         aria-hidden="true"
-        className={`fixed inset-0 z-[60] bg-black/40 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[60] bg-black/40 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       />
@@ -37,7 +37,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
         role="dialog"
         aria-modal="true"
         aria-label="Сагс"
-        className={`fixed top-0 right-0 z-[70] h-full w-full max-w-sm bg-surface-container-lowest shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 z-[70] h-full w-full max-w-sm bg-surface-container-lowest shadow-2xl flex flex-col will-change-transform transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
