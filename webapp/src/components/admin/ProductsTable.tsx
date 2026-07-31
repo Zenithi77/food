@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { MaterialIcon } from "@/components/MaterialIcon";
 import { formatMNT } from "@/lib/format";
 import type { CategoryDTO, ProductDTO, SubcategoryDTO } from "@/types";
@@ -44,6 +45,8 @@ export function ProductsTable({
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const availableSubcategories = useMemo(
     () => subcategories.filter((s) => s.categoryId === form.categoryId),
@@ -78,6 +81,27 @@ export function ProductsTable({
 
   function handleNameChange(name: string) {
     setForm((f) => ({ ...f, name, slug: f.slugTouched ? f.slug : slugify(name) }));
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Зураг байршуулахад алдаа гарлаа.");
+        return;
+      }
+      setForm((f) => ({ ...f, imageUrl: data.url }));
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -205,7 +229,41 @@ export function ProductsTable({
                 </div>
               </div>
               <Field label="Нөөц" type="number" value={form.stock} onChange={(v) => setForm({ ...form, stock: v })} required />
-              <Field label="Зургийн URL" value={form.imageUrl} onChange={(v) => setForm({ ...form, imageUrl: v })} required />
+              <div>
+                <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
+                  Зураг
+                </label>
+                <div className="flex items-center gap-u-sm">
+                  {form.imageUrl ? (
+                    <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 relative bg-surface-container-low">
+                      <Image src={form.imageUrl} alt="" fill sizes="64px" className="object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg flex items-center justify-center flex-shrink-0 bg-surface-container-low text-secondary">
+                      <MaterialIcon name="image" className="text-2xl" />
+                    </div>
+                  )}
+                  <div className="flex-grow">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleFileChange}
+                      disabled={uploading}
+                      className="block w-full text-label-sm text-secondary file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-primary file:text-on-primary file:font-label-sm file:cursor-pointer hover:file:opacity-90 disabled:opacity-60"
+                    />
+                    {uploading && <p className="text-label-sm text-secondary mt-1">Байршуулж байна...</p>}
+                  </div>
+                </div>
+                <input
+                  type="url"
+                  required
+                  value={form.imageUrl}
+                  onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+                  placeholder="эсвэл зургийн URL шууд оруулах"
+                  className="mt-2 w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-label-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors"
+                />
+              </div>
               <label className="flex items-center gap-2 text-secondary text-label-sm">
                 <input
                   type="checkbox"
@@ -225,7 +283,7 @@ export function ProductsTable({
                 </button>
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || uploading}
                   className="flex-1 bg-primary text-on-primary py-3 rounded-full font-label-md text-label-md hover:opacity-90 transition-opacity disabled:opacity-60"
                 >
                   {submitting ? "Хадгалж байна..." : "Хадгалах"}
