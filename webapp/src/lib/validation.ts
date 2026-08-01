@@ -30,6 +30,7 @@ export const ProductSchema = z.object({
 export const CategorySchema = z.object({
   name: z.string().trim().min(2, "Ангиллын нэр дор хаяж 2 тэмдэгттэй байх ёстой."),
   slug: z.string().trim().toLowerCase().regex(SLUG_REGEX, "Slug зөвхөн жижиг латин үсэг, тоо, зураас агуулна."),
+  imageUrl: z.string().trim().url().nullable().optional().default(null),
 });
 
 export const SubcategorySchema = z.object({

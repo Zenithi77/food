@@ -17,8 +17,11 @@ create table if not exists categories (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   slug text not null unique,
+  image_url text,
   created_at timestamptz not null default now()
 );
+
+alter table categories add column if not exists image_url text;
 
 create table if not exists subcategories (
   id uuid primary key default gen_random_uuid(),

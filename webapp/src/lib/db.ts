@@ -108,8 +108,14 @@ export async function countCustomers(): Promise<number> {
 
 // ---------- Categories ----------
 
-function toCategoryDTO(c: { id: string; name: string; slug: string; created_at: string }): CategoryDTO {
-  return { id: c.id, name: c.name, slug: c.slug, createdAt: c.created_at };
+function toCategoryDTO(c: {
+  id: string;
+  name: string;
+  slug: string;
+  image_url: string | null;
+  created_at: string;
+}): CategoryDTO {
+  return { id: c.id, name: c.name, slug: c.slug, imageUrl: c.image_url, createdAt: c.created_at };
 }
 
 export async function listCategories(): Promise<CategoryDTO[]> {
@@ -124,14 +130,28 @@ export async function getCategoryBySlug(slug: string): Promise<CategoryDTO | nul
   return data ? toCategoryDTO(data) : null;
 }
 
-export async function createCategory(input: { name: string; slug: string }): Promise<CategoryDTO> {
-  const { data, error } = await getSupabase().from("categories").insert(input).select().single();
+export async function createCategory(input: {
+  name: string;
+  slug: string;
+  imageUrl?: string | null;
+}): Promise<CategoryDTO> {
+  const { data, error } = await getSupabase()
+    .from("categories")
+    .insert({ name: input.name, slug: input.slug, image_url: input.imageUrl ?? null })
+    .select()
+    .single();
   if (error) throw error;
   return toCategoryDTO(data);
 }
 
-export async function updateCategory(id: string, input: { name: string; slug: string }): Promise<void> {
-  const { error } = await getSupabase().from("categories").update(input).eq("id", id);
+export async function updateCategory(
+  id: string,
+  input: { name: string; slug: string; imageUrl?: string | null }
+): Promise<void> {
+  const { error } = await getSupabase()
+    .from("categories")
+    .update({ name: input.name, slug: input.slug, image_url: input.imageUrl ?? null })
+    .eq("id", id);
   if (error) throw error;
 }
 

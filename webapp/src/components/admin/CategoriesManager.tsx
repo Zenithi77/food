@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { MaterialIcon } from "@/components/MaterialIcon";
 import type { CategoryDTO, SubcategoryDTO } from "@/types";
 
@@ -38,14 +39,18 @@ function CategoryPanel({ categories, onChanged }: { categories: CategoryDTO[]; o
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function reset() {
     setName("");
     setSlug("");
     setSlugTouched(false);
+    setImageUrl(null);
     setEditingId(null);
     setError(null);
   }
@@ -55,7 +60,29 @@ function CategoryPanel({ categories, onChanged }: { categories: CategoryDTO[]; o
     setName(c.name);
     setSlug(c.slug);
     setSlugTouched(true);
+    setImageUrl(c.imageUrl);
     setError(null);
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Зураг байршуулахад алдаа гарлаа.");
+        return;
+      }
+      setImageUrl(data.url);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -66,7 +93,7 @@ function CategoryPanel({ categories, onChanged }: { categories: CategoryDTO[]; o
       const res = await fetch(editingId ? `/api/categories/${editingId}` : "/api/categories", {
         method: editingId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, slug }),
+        body: JSON.stringify({ name, slug, imageUrl }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -114,6 +141,28 @@ function CategoryPanel({ categories, onChanged }: { categories: CategoryDTO[]; o
             className="w-32 bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors"
           />
         </div>
+        <div className="flex items-center gap-u-sm">
+          {imageUrl ? (
+            <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 relative bg-surface-container-low">
+              <Image src={imageUrl} alt="" fill sizes="56px" className="object-cover" />
+            </div>
+          ) : (
+            <div className="w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0 bg-surface-container-low text-secondary">
+              <MaterialIcon name="image" className="text-xl" />
+            </div>
+          )}
+          <div className="flex-grow">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              onChange={handleFileChange}
+              disabled={uploading}
+              className="block w-full text-label-sm text-secondary file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:bg-primary file:text-on-primary file:font-label-sm file:cursor-pointer hover:file:opacity-90 disabled:opacity-60"
+            />
+            {uploading && <p className="text-label-sm text-secondary mt-1">Байршуулж байна...</p>}
+          </div>
+        </div>
         <div className="flex gap-u-sm">
           {editingId && (
             <button
@@ -126,7 +175,7 @@ function CategoryPanel({ categories, onChanged }: { categories: CategoryDTO[]; o
           )}
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || uploading}
             className="flex-1 bg-primary text-on-primary py-2 rounded-full font-label-sm text-label-sm hover:opacity-90 transition-opacity disabled:opacity-60"
           >
             {submitting ? "Хадгалж байна..." : editingId ? "Ангилал засах" : "Ангилал нэмэх"}
@@ -140,9 +189,20 @@ function CategoryPanel({ categories, onChanged }: { categories: CategoryDTO[]; o
         ) : (
           categories.map((c) => (
             <div key={c.id} className="flex items-center justify-between py-u-sm">
-              <div>
-                <p className="font-label-md text-label-md">{c.name}</p>
-                <p className="text-label-sm text-secondary">{c.slug}</p>
+              <div className="flex items-center gap-u-sm">
+                {c.imageUrl ? (
+                  <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 relative bg-surface-container-low">
+                    <Image src={c.imageUrl} alt="" fill sizes="40px" className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-surface-container-low text-secondary">
+                    <MaterialIcon name="image" className="text-base" />
+                  </div>
+                )}
+                <div>
+                  <p className="font-label-md text-label-md">{c.name}</p>
+                  <p className="text-label-sm text-secondary">{c.slug}</p>
+                </div>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => startEdit(c)} className="text-secondary hover:text-primary transition-colors">
