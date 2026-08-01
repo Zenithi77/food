@@ -36,39 +36,10 @@ export default async function HomePage({
 
   return (
     <>
-      <section className="relative w-full h-[420px] md:h-[480px] flex items-end">
-        <Image
-          src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600&q=80"
-          alt="Хүнсний дэлгүүрийн шинэ ногоо, жимсний лангуу"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 hero-overlay" />
-        <div className="relative max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pb-u-xl w-full">
-          <h1 className="font-display-lg text-display-lg text-white max-w-2xl mb-u-sm">
-            Шинэ хүнс,
-            <br />
-            танай гэрт хүргэнэ.
-          </h1>
-          <p className="text-white/90 text-body-lg max-w-lg mb-u-md">
-            Өдөр тутмын хэрэгцээт хүнсний бүтээгдэхүүнийг хамгийн шинэ, чанартай байдлаар танай хаалган дээр хүргэж өгнө.
-          </p>
-          <a
-            href="#shop"
-            className="inline-block bg-primary text-on-primary py-3 px-8 rounded-full font-label-md text-label-md hover:opacity-90 transition-opacity active:scale-[0.98] duration-150"
-          >
-            ОДОО ХУДАЛДАН АВАХ
-          </a>
-        </div>
-      </section>
-
       {showBrowse ? (
         <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-u-xl w-full" id="shop">
-          <h2 className="font-headline-lg text-headline-lg text-primary mb-u-lg">Ангиллаар үзэх</h2>
-          <div className="grid grid-cols-3 gap-3 md:gap-gutter">
-            {categories.slice(0, 6).map((c) => (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-gutter">
+            {categories.map((c) => (
               <Link key={c.id} href={`/?category=${c.id}`} className="group flex flex-col items-center gap-2">
                 <div className="w-full aspect-square rounded-lg md:rounded-xl overflow-hidden relative bg-surface-container-low ring-1 ring-outline-variant/60 group-hover:ring-primary transition-all">
                   {c.imageUrl ? (
@@ -76,7 +47,7 @@ export default async function HomePage({
                       src={c.imageUrl}
                       alt={c.name}
                       fill
-                      sizes="(max-width: 768px) 33vw, 200px"
+                      sizes="(max-width: 640px) 50vw, 25vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
@@ -85,15 +56,11 @@ export default async function HomePage({
                     </div>
                   )}
                 </div>
-                <span className="font-label-sm text-label-sm text-on-surface text-center group-hover:text-primary transition-colors">
+                <span className="font-label-md text-label-md text-on-surface text-center group-hover:text-primary transition-colors">
                   {c.name}
                 </span>
               </Link>
             ))}
-          </div>
-
-          <div className="mt-u-lg p-u-lg bg-secondary-container rounded-lg text-center">
-            <p className="text-label-sm text-secondary italic">Захиалга бүр таны гэр бүлийн ширээнд шинэ хүнс хүргэхэд тусална.</p>
           </div>
         </div>
       ) : (
