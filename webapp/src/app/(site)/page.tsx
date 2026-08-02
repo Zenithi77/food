@@ -34,35 +34,78 @@ export default async function HomePage({
         ? activeCategory.name
         : "Энэ долоо хоногийн бараа";
 
+  const CATEGORY_ORDER = ["makh", "shingen-amtlagch", "khuurai-amtlagch", "sauce", "hachir", "laazalsan-buteegdehuun", "busad"];
+  const orderedCategories = [...categories].sort((a, b) => {
+    const ai = CATEGORY_ORDER.indexOf(a.slug);
+    const bi = CATEGORY_ORDER.indexOf(b.slug);
+    if (ai === -1 && bi === -1) return a.name.localeCompare(b.name);
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
+
   return (
     <>
       {showBrowse ? (
-        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-u-xl w-full" id="shop">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-gutter">
-            {categories.map((c) => (
-              <Link key={c.id} href={`/?category=${c.id}`} className="group flex flex-col items-center gap-2">
-                <div className="w-full aspect-square rounded-lg md:rounded-xl overflow-hidden relative bg-surface-container-low ring-1 ring-outline-variant/60 group-hover:ring-primary transition-all">
-                  {c.imageUrl ? (
-                    <Image
-                      src={c.imageUrl}
-                      alt={c.name}
-                      fill
-                      sizes="(max-width: 640px) 50vw, 25vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-secondary">
-                      <MaterialIcon name="category" className="text-3xl" />
-                    </div>
-                  )}
+        <>
+          <section className="w-full bg-primary">
+            <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-u-xl flex flex-col md:flex-row items-center gap-u-lg">
+              <div className="flex-1 text-center md:text-left">
+                <h1 className="font-display-lg text-display-lg text-on-primary max-w-md mx-auto md:mx-0 mb-u-sm">
+                  Хүнсээ онлайнаар захиал, хаалгандаа хүргүүлээрэй
+                </h1>
+                <p className="text-on-primary/85 text-body-lg max-w-md mx-auto md:mx-0 mb-u-md">
+                  Өдөр тутмын хэрэгцээт хүнсний бүтээгдэхүүнийг хамгийн шинэ, чанартай байдлаар танд хүргэнэ.
+                </p>
+                <a
+                  href="#shop"
+                  className="inline-block bg-on-primary text-primary py-3 px-8 rounded-full font-label-md text-label-md hover:opacity-90 transition-opacity active:scale-[0.98] duration-150"
+                >
+                  ОДОО ЗАХИАЛАХ
+                </a>
+              </div>
+              <div className="hidden md:block flex-1 w-full max-w-md">
+                <div className="w-full aspect-[16/9] rounded-2xl overflow-hidden relative">
+                  <Image
+                    src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80"
+                    alt="Хүнсний дэлгүүрийн шинэ ногоо, жимсний лангуу"
+                    fill
+                    sizes="400px"
+                    className="object-cover"
+                  />
                 </div>
-                <span className="font-label-md text-label-md text-on-surface text-center group-hover:text-primary transition-colors">
-                  {c.name}
-                </span>
-              </Link>
-            ))}
+              </div>
+            </div>
+          </section>
+
+          <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-u-xl w-full" id="shop">
+            <h2 className="font-headline-lg text-headline-lg text-primary mb-u-lg">Ангиллаар үзэх</h2>
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-gutter">
+              {orderedCategories.map((c) => (
+                <Link key={c.id} href={`/?category=${c.id}`} className="group flex flex-col items-center gap-2">
+                  <div className="w-full aspect-square rounded-lg md:rounded-xl overflow-hidden relative bg-surface-container-low ring-1 ring-outline-variant/60 group-hover:ring-primary transition-all">
+                    {c.imageUrl ? (
+                      <Image
+                        src={c.imageUrl}
+                        alt={c.name}
+                        fill
+                        sizes="(max-width: 640px) 33vw, 14vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-secondary">
+                        <MaterialIcon name="category" className="text-3xl" />
+                      </div>
+                    )}
+                  </div>
+                  <span className="font-label-md text-label-md text-on-surface text-center group-hover:text-primary transition-colors">
+                    {c.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       ) : (
         <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-u-xl w-full" id="shop">
           <div className="flex flex-col gap-u-md mb-u-lg">

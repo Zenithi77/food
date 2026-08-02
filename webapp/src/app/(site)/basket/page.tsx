@@ -210,7 +210,7 @@ export default function BasketPage() {
             </button>
 
             <div className="mt-u-md text-center">
-              <p className="text-label-sm text-on-surface-variant italic">Хүргэлт: Улаанбаатар хотын дотор 24 цагийн дотор.</p>
+              <p className="text-label-sm text-on-surface-variant italic">Захиалгын дараа хүргэлтийн хугацааг тантай холбогдож баталгаажуулна.</p>
             </div>
           </div>
         </div>
