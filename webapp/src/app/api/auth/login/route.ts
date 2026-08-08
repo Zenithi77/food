@@ -33,6 +33,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
     console.error("Login failed:", err);
-    return NextResponse.json({ error: "Серверийн алдаа гарлаа." }, { status: 500 });
+    // TEMP DEBUG — remove after diagnosing production 500
+    const detail = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: "Серверийн алдаа гарлаа.", debug: detail }, { status: 500 });
   }
 }
