@@ -16,18 +16,23 @@ export async function POST(request: NextRequest) {
 
   const { email, password } = parsed.data;
 
-  const user = await findUserByEmail(email);
-  if (!user || !(await verifyPassword(password, user.passwordHash))) {
-    return NextResponse.json({ error: "Имэйл эсвэл нууц үг буруу байна." }, { status: 401 });
+  try {
+    const user = await findUserByEmail(email);
+    if (!user || !(await verifyPassword(password, user.passwordHash))) {
+      return NextResponse.json({ error: "Имэйл эсвэл нууц үг буруу байна." }, { status: 401 });
+    }
+
+    const token = await createSessionToken({
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    });
+    await setSessionCookie(token);
+
+    return NextResponse.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+  } catch (err) {
+    console.error("Login failed:", err);
+    return NextResponse.json({ error: "Серверийн алдаа гарлаа." }, { status: 500 });
   }
-
-  const token = await createSessionToken({
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-  });
-  await setSessionCookie(token);
-
-  return NextResponse.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role } });
 }

@@ -21,9 +21,9 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Нэвтрэхэд алдаа гарлаа.");
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data) {
+        setError(data?.error ?? "Нэвтрэхэд алдаа гарлаа.");
         return;
       }
       router.push(data.user.role === "ADMIN" ? "/admin" : "/");

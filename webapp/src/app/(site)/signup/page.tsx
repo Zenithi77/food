@@ -30,9 +30,9 @@ export default function SignupPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phone, password }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Бүртгэл үүсгэхэд алдаа гарлаа.");
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data) {
+        setError(data?.error ?? "Бүртгэл үүсгэхэд алдаа гарлаа.");
         return;
       }
       router.push("/");

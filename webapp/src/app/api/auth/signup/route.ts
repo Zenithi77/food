@@ -16,21 +16,26 @@ export async function POST(request: NextRequest) {
 
   const { name, email, phone, password } = parsed.data;
 
-  const existing = await findUserByEmail(email);
-  if (existing) {
-    return NextResponse.json({ error: "Энэ имэйл хаягаар бүртгэл аль хэдийн үүссэн байна." }, { status: 409 });
+  try {
+    const existing = await findUserByEmail(email);
+    if (existing) {
+      return NextResponse.json({ error: "Энэ имэйл хаягаар бүртгэл аль хэдийн үүссэн байна." }, { status: 409 });
+    }
+
+    const passwordHash = await hashPassword(password);
+    const user = await createUser({ name, email, phone, passwordHash, role: "CUSTOMER" });
+
+    const token = await createSessionToken({
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    });
+    await setSessionCookie(token);
+
+    return NextResponse.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+  } catch (err) {
+    console.error("Signup failed:", err);
+    return NextResponse.json({ error: "Серверийн алдаа гарлаа." }, { status: 500 });
   }
-
-  const passwordHash = await hashPassword(password);
-  const user = await createUser({ name, email, phone, passwordHash, role: "CUSTOMER" });
-
-  const token = await createSessionToken({
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-  });
-  await setSessionCookie(token);
-
-  return NextResponse.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role } });
 }
