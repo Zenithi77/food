@@ -51,4 +51,16 @@ export const OrderCreateSchema = z.object({
   address: z.string().trim().min(3, "Хүргэлтийн хаягаа оруулна уу."),
   phone: z.string().trim().min(6, "Утасны дугаараа оруулна уу."),
   note: z.string().trim().default(""),
+  paymentType: z.enum(["CASH", "CREDIT", "QPAY"], {
+    message: "Төлбөрийн төрлөө сонгоно уу.",
+  }),
+  idempotencyKey: z.string().trim().min(1, "idempotencyKey шаардлагатай."),
+});
+
+export const CompanyCreateSchema = z.object({
+  name: z.string().trim().min(2, "Байгууллагын нэр дор хаяж 2 тэмдэгттэй байх ёстой."),
+  contactPhone: z.string().trim().min(6, "Утасны дугаараа оруулна уу.").default(""),
+  contactEmail: z.string().trim().email("Зөв имэйл хаяг оруулна уу.").or(z.literal("")).default(""),
+  loginEmail: z.string().trim().email("Зөв нэвтрэх имэйл хаяг оруулна уу."),
+  loginPassword: z.string().min(6, "Нууц үг дор хаяж 6 тэмдэгттэй байх ёстой."),
 });

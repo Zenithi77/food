@@ -66,13 +66,48 @@ create table if not exists order_items (
   price numeric not null
 );
 
+-- Байгууллагууд (B2B захиалагчид) — admin талаас бүртгэдэг, өөрөө бүртгүүлдэггүй.
+create table if not exists companies (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  contact_phone text not null default '',
+  contact_email text not null default '',
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+alter table users add column if not exists company_id uuid references companies(id);
+alter table orders add column if not exists company_id uuid references companies(id);
+alter table orders add column if not exists payment_type text not null default 'CASH'
+  check (payment_type in ('CASH', 'CREDIT', 'QPAY'));
+alter table orders add column if not exists idempotency_key text;
+
+create unique index if not exists idx_orders_idempotency_key
+  on orders(idempotency_key) where idempotency_key is not null;
+
+-- Захиалга бүрийн төлбөрийн бичлэг: бэлнээр/зээлээр гэвэл шууд SUCCESS,
+-- QPay бол PENDING-ээс эхэлж webhook/polling-оор баталгаажина.
+create table if not exists payments (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null references orders(id) on delete cascade,
+  type text not null check (type in ('CASH', 'CREDIT', 'QPAY')),
+  amount numeric not null,
+  status text not null default 'PENDING' check (status in ('PENDING', 'SUCCESS', 'FAILED')),
+  qpay_invoice_id text,
+  qpay_transaction_id text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create index if not exists idx_subcategories_category_id on subcategories(category_id);
 create index if not exists idx_products_category_id on products(category_id);
 create index if not exists idx_products_subcategory_id on products(subcategory_id);
 create index if not exists idx_products_stock on products(stock);
 create index if not exists idx_orders_user_id on orders(user_id);
 create index if not exists idx_orders_created_at on orders(created_at desc);
+create index if not exists idx_orders_company_id on orders(company_id);
 create index if not exists idx_order_items_order_id on order_items(order_id);
+create index if not exists idx_payments_order_id on payments(order_id);
 
 -- Row Level Security — сервер тал маань зөвхөн service_role түлхүүрээр хандах тул
 -- (service_role нь RLS-ийг үргэлж алгасдаг), энгийн клиент (anon)-аас шууд бичихийг хаана.
@@ -82,6 +117,8 @@ alter table subcategories enable row level security;
 alter table products enable row level security;
 alter table orders enable row level security;
 alter table order_items enable row level security;
+alter table companies enable row level security;
+alter table payments enable row level security;
 
 -- Бүтээгдэхүүн, ангиллыг хэн ч (anon) уншиж болно (дэлгүүрийн жагсаалт нээлттэй байх ёстой тул)
 drop policy if exists "Public read categories" on categories;
@@ -103,7 +140,10 @@ create or replace function create_order(
   p_address text,
   p_phone text,
   p_note text,
-  p_items jsonb -- [{"product_id": "uuid", "quantity": 2}, ...]
+  p_items jsonb, -- [{"product_id": "uuid", "quantity": 2}, ...]
+  p_payment_type text default 'CASH',
+  p_company_id uuid default null,
+  p_idempotency_key text default null
 ) returns uuid
 language plpgsql
 security definer
@@ -116,7 +156,15 @@ declare
   v_shipping numeric;
   v_vat numeric;
   v_total numeric;
+  v_payment_status text;
 begin
+  if p_idempotency_key is not null then
+    select id into v_order_id from orders where idempotency_key = p_idempotency_key;
+    if found then
+      return v_order_id;
+    end if;
+  end if;
+
   for v_item in select * from jsonb_array_elements(p_items)
   loop
     select * into v_product from products where id = (v_item->>'product_id')::uuid for update;
@@ -133,8 +181,8 @@ begin
   v_vat := v_subtotal * 0.1;
   v_total := v_subtotal + v_shipping + v_vat;
 
-  insert into orders (user_id, status, total, address, phone, note)
-  values (p_user_id, 'PENDING', v_total, p_address, p_phone, p_note)
+  insert into orders (user_id, status, total, address, phone, note, payment_type, company_id, idempotency_key)
+  values (p_user_id, 'PENDING', v_total, p_address, p_phone, p_note, p_payment_type, p_company_id, p_idempotency_key)
   returning id into v_order_id;
 
   for v_item in select * from jsonb_array_elements(p_items)
@@ -147,6 +195,37 @@ begin
     update products set stock = stock - (v_item->>'quantity')::int where id = v_product.id;
   end loop;
 
+  v_payment_status := case when p_payment_type = 'QPAY' then 'PENDING' else 'SUCCESS' end;
+  insert into payments (order_id, type, amount, status)
+  values (v_order_id, p_payment_type, v_total, v_payment_status);
+
   return v_order_id;
+end;
+$$;
+
+-- Байгууллага + түүний нэвтрэх хэрэглэгчийг нэг гүйлгээнд атомик үүсгэнэ.
+create or replace function create_company_with_user(
+  p_company_name text,
+  p_contact_phone text,
+  p_contact_email text,
+  p_user_name text,
+  p_user_email text,
+  p_user_phone text,
+  p_password_hash text
+) returns uuid
+language plpgsql
+security definer
+as $$
+declare
+  v_company_id uuid;
+begin
+  insert into companies (name, contact_phone, contact_email)
+  values (p_company_name, p_contact_phone, p_contact_email)
+  returning id into v_company_id;
+
+  insert into users (name, email, phone, password_hash, role, company_id)
+  values (p_user_name, p_user_email, p_user_phone, p_password_hash, 'COMPANY', v_company_id);
+
+  return v_company_id;
 end;
 $$;

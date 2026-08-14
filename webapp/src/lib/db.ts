@@ -7,6 +7,9 @@ import type {
   OrderDTO,
   OrderStatus,
   Role,
+  CompanyDTO,
+  PaymentType,
+  PaymentStatus,
 } from "@/types";
 
 function num(value: unknown): number {
@@ -22,6 +25,7 @@ export interface UserRecord {
   phone: string;
   passwordHash: string;
   role: Role;
+  companyId: string | null;
   createdAt: string;
 }
 
@@ -32,6 +36,7 @@ function toUserRecord(u: {
   phone: string;
   password_hash: string;
   role: string;
+  company_id: string | null;
   created_at: string;
 }): UserRecord {
   return {
@@ -41,6 +46,7 @@ function toUserRecord(u: {
     phone: u.phone,
     passwordHash: u.password_hash,
     role: u.role as Role,
+    companyId: u.company_id,
     createdAt: u.created_at,
   };
 }
@@ -71,6 +77,62 @@ export async function createUser(input: {
     .single();
   if (error) throw error;
   return toUserRecord(data);
+}
+
+// ---------- Companies ----------
+
+export class CompanyError extends Error {}
+
+function toCompanyDTO(c: {
+  id: string;
+  name: string;
+  contact_phone: string;
+  contact_email: string;
+  is_active: boolean;
+  created_at: string;
+}): CompanyDTO {
+  return {
+    id: c.id,
+    name: c.name,
+    contactPhone: c.contact_phone,
+    contactEmail: c.contact_email,
+    isActive: c.is_active,
+    createdAt: c.created_at,
+  };
+}
+
+export async function listCompanies(): Promise<CompanyDTO[]> {
+  const { data, error } = await getSupabase().from("companies").select("*").order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map(toCompanyDTO);
+}
+
+export async function createCompany(input: {
+  name: string;
+  contactPhone: string;
+  contactEmail: string;
+  userName: string;
+  userEmail: string;
+  userPhone: string;
+  passwordHash: string;
+}): Promise<CompanyDTO> {
+  const { data: companyId, error } = await getSupabase().rpc("create_company_with_user", {
+    p_company_name: input.name,
+    p_contact_phone: input.contactPhone,
+    p_contact_email: input.contactEmail,
+    p_user_name: input.userName,
+    p_user_email: input.userEmail,
+    p_user_phone: input.userPhone,
+    p_password_hash: input.passwordHash,
+  });
+
+  if (error) {
+    throw new CompanyError(error.message);
+  }
+
+  const { data, error: fetchError } = await getSupabase().from("companies").select("*").eq("id", companyId).single();
+  if (fetchError) throw fetchError;
+  return toCompanyDTO(data);
 }
 
 export async function listCustomers(): Promise<(UserDTO & { orderCount: number })[]> {
@@ -371,7 +433,11 @@ interface OrderRow {
   phone: string;
   note: string;
   created_at: string;
+  company_id: string | null;
+  payment_type: string;
   user: { name: string; email: string } | { name: string; email: string }[] | null;
+  company: { name: string } | { name: string }[] | null;
+  payments: { status: string }[] | null;
   items:
     | {
         product_id: string;
@@ -384,6 +450,7 @@ interface OrderRow {
 
 function toOrderDTO(o: OrderRow): OrderDTO {
   const user = Array.isArray(o.user) ? o.user[0] : o.user;
+  const company = Array.isArray(o.company) ? o.company[0] : o.company;
   return {
     id: o.id,
     userId: o.user_id,
@@ -406,11 +473,15 @@ function toOrderDTO(o: OrderRow): OrderDTO {
       };
     }),
     createdAt: o.created_at,
+    companyId: o.company_id,
+    companyName: company?.name ?? null,
+    paymentType: o.payment_type as PaymentType,
+    paymentStatus: (o.payments?.[0]?.status as PaymentStatus) ?? "PENDING",
   };
 }
 
 const ORDER_SELECT =
-  "*, user:users(name, email), items:order_items(product_id, quantity, price, product:products(name, image_url, unit))";
+  "*, user:users(name, email), company:companies(name), payments(status), items:order_items(product_id, quantity, price, product:products(name, image_url, unit))";
 
 export async function listOrders(filters?: { userId?: string }): Promise<OrderDTO[]> {
   let query = getSupabase().from("orders").select(ORDER_SELECT).order("created_at", { ascending: false });
@@ -444,6 +515,9 @@ export interface CreateOrderInput {
   phone: string;
   note: string;
   items: { productId: string; quantity: number }[];
+  paymentType: PaymentType;
+  companyId: string | null;
+  idempotencyKey: string;
 }
 
 export class OrderError extends Error {}
@@ -456,6 +530,9 @@ export async function createOrder(input: CreateOrderInput): Promise<OrderDTO> {
     p_phone: input.phone,
     p_note: input.note,
     p_items: input.items.map((i) => ({ product_id: i.productId, quantity: i.quantity })),
+    p_payment_type: input.paymentType,
+    p_company_id: input.companyId,
+    p_idempotency_key: input.idempotencyKey,
   });
 
   if (error) {
@@ -467,8 +544,71 @@ export async function createOrder(input: CreateOrderInput): Promise<OrderDTO> {
   return toOrderDTO(data as unknown as OrderRow);
 }
 
+export async function getOrderById(id: string): Promise<OrderDTO | null> {
+  const { data, error } = await getSupabase().from("orders").select(ORDER_SELECT).eq("id", id).maybeSingle();
+  if (error) throw error;
+  return data ? toOrderDTO(data as unknown as OrderRow) : null;
+}
+
 export async function updateOrderStatus(id: string, status: OrderStatus): Promise<void> {
   if (!STATUSES.includes(status)) throw new Error("Invalid status");
   const { error } = await getSupabase().from("orders").update({ status }).eq("id", id);
+  if (error) throw error;
+}
+
+// ---------- Payments ----------
+
+export interface PaymentRecord {
+  id: string;
+  orderId: string;
+  type: PaymentType;
+  amount: number;
+  status: PaymentStatus;
+  qpayInvoiceId: string | null;
+  qpayTransactionId: string | null;
+}
+
+function toPaymentRecord(p: {
+  id: string;
+  order_id: string;
+  type: string;
+  amount: number | string;
+  status: string;
+  qpay_invoice_id: string | null;
+  qpay_transaction_id: string | null;
+}): PaymentRecord {
+  return {
+    id: p.id,
+    orderId: p.order_id,
+    type: p.type as PaymentType,
+    amount: num(p.amount),
+    status: p.status as PaymentStatus,
+    qpayInvoiceId: p.qpay_invoice_id,
+    qpayTransactionId: p.qpay_transaction_id,
+  };
+}
+
+export async function getPaymentByOrderId(orderId: string): Promise<PaymentRecord | null> {
+  const { data, error } = await getSupabase().from("payments").select("*").eq("order_id", orderId).maybeSingle();
+  if (error) throw error;
+  return data ? toPaymentRecord(data) : null;
+}
+
+export async function updatePaymentInvoice(
+  orderId: string,
+  input: { qpayInvoiceId: string }
+): Promise<void> {
+  const { error } = await getSupabase()
+    .from("payments")
+    .update({ qpay_invoice_id: input.qpayInvoiceId, updated_at: new Date().toISOString() })
+    .eq("order_id", orderId);
+  if (error) throw error;
+}
+
+export async function markPaymentPaid(orderId: string, qpayTransactionId: string | null): Promise<void> {
+  const { error } = await getSupabase()
+    .from("payments")
+    .update({ status: "SUCCESS", qpay_transaction_id: qpayTransactionId, updated_at: new Date().toISOString() })
+    .eq("order_id", orderId);
   if (error) throw error;
 }

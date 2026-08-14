@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 
-export type Role = "CUSTOMER" | "ADMIN";
+export type Role = "CUSTOMER" | "ADMIN" | "COMPANY";
 
 const SESSION_COOKIE = "oh_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 7; // 7 days
@@ -71,6 +71,12 @@ export async function getSession(): Promise<SessionPayload | null> {
 export async function requireAdminSession(): Promise<SessionPayload | null> {
   const session = await getSession();
   if (!session || session.role !== "ADMIN") return null;
+  return session;
+}
+
+export async function requireCompanySession(): Promise<SessionPayload | null> {
+  const session = await getSession();
+  if (!session || session.role !== "COMPANY") return null;
   return session;
 }
 

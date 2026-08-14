@@ -5,12 +5,20 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MaterialIcon } from "@/components/MaterialIcon";
+import { PaymentSuccessAnimation } from "@/components/PaymentSuccessAnimation";
 import { useCartStore, cartSubtotal } from "@/store/cart";
 import { formatMNT } from "@/lib/format";
+import type { PaymentType } from "@/types";
 
 const VAT_RATE = 0.1;
 const FREE_SHIPPING_THRESHOLD = 50000;
 const SHIPPING_FEE = 5000;
+
+const PAYMENT_OPTIONS: { value: PaymentType; label: string }[] = [
+  { value: "CASH", label: "Бэлнээр" },
+  { value: "CREDIT", label: "Зээлээр" },
+  { value: "QPAY", label: "QPay-ээр" },
+];
 
 export default function BasketPage() {
   const router = useRouter();
@@ -21,6 +29,9 @@ export default function BasketPage() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
+  const [paymentType, setPaymentType] = useState<PaymentType>("CASH");
+  const [success, setSuccess] = useState(false);
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
 
   useEffect(() => setHydrated(true), []);
 
@@ -50,22 +61,46 @@ export default function BasketPage() {
           address: address.trim(),
           phone: phone.trim(),
           note: note.trim(),
+          paymentType,
+          idempotencyKey,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data) {
         if (res.status === 401) {
           router.push("/login");
           return;
         }
-        setError(data.error ?? "Захиалга үүсгэхэд алдаа гарлаа.");
+        setError(data?.error ?? "Захиалга үүсгэхэд алдаа гарлаа.");
         return;
       }
+
+      if (paymentType === "QPAY") {
+        sessionStorage.setItem(
+          `qpay-invoice-${data.order.id}`,
+          JSON.stringify({ qpayInvoice: data.qpayInvoice, amount: data.order.total })
+        );
+        clear();
+        router.push(`/orders/${data.order.id}/pay`);
+        return;
+      }
+
       clear();
-      router.push("/orders?success=1");
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/orders?success=1");
+      }, 1400);
     } finally {
       setPlacing(false);
     }
+  }
+
+  if (success) {
+    return (
+      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-u-xl w-full">
+        <PaymentSuccessAnimation message="Захиалга амжилттай үүслээ!" />
+      </div>
+    );
   }
 
   if (hydrated && items.length === 0) {
@@ -197,6 +232,28 @@ export default function BasketPage() {
                 {formatMNT(FREE_SHIPPING_THRESHOLD - subtotal)}-ны худалдан авалт хийвэл хүргэлт үнэгүй.
               </p>
             )}
+
+            <div className="mb-u-md">
+              <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">
+                Төлбөрийн төрөл
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {PAYMENT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setPaymentType(opt.value)}
+                    className={`py-2 px-2 rounded-full font-label-sm text-label-sm border transition-colors ${
+                      paymentType === opt.value
+                        ? "bg-primary text-on-primary border-primary"
+                        : "border-outline-variant text-secondary hover:bg-surface-container-low"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {error && <p className="text-error text-label-sm mb-u-md">{error}</p>}
 

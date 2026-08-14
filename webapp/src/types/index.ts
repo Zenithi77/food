@@ -1,5 +1,7 @@
-export type Role = "CUSTOMER" | "ADMIN";
+export type Role = "CUSTOMER" | "ADMIN" | "COMPANY";
 export type OrderStatus = "PENDING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+export type PaymentType = "CASH" | "CREDIT" | "QPAY";
+export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED";
 
 export interface CategoryDTO {
   id: string;
@@ -64,6 +66,19 @@ export interface OrderDTO {
   phone: string;
   note: string;
   items: OrderItemDTO[];
+  createdAt: string;
+  companyId: string | null;
+  companyName: string | null;
+  paymentType: PaymentType;
+  paymentStatus: PaymentStatus;
+}
+
+export interface CompanyDTO {
+  id: string;
+  name: string;
+  contactPhone: string;
+  contactEmail: string;
+  isActive: boolean;
   createdAt: string;
 }
 

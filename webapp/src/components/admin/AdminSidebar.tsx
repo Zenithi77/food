@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: "/admin/categories", label: "Ангилал", icon: "category" },
   { href: "/admin/orders", label: "Захиалгууд", icon: "receipt_long" },
   { href: "/admin/customers", label: "Хэрэглэгчид", icon: "group" },
+  { href: "/admin/companies", label: "Байгууллагууд", icon: "domain" },
 ];
 
 export function AdminSidebar({ email }: { email: string }) {
